@@ -55,9 +55,9 @@ print(
     '\ntorch: ', torch.mm(tensor, tensor)   # [[7, 10], [15, 22]]
 )
 # incorrect method
-data = np.array(data)
-print(
-    '\nmatrix multiplication (dot)',
-    '\nnumpy: ', data.dot(data),        # [[7, 10], [15, 22]]
-    '\ntorch: ', tensor.dot(tensor)     # this will convert tensor to [1,2,3,4], you'll get 30.0
-)
+# data = np.array(data)
+# print(
+#     '\nmatrix multiplication (dot)',
+#     '\nnumpy: ', data.dot(data),        # [[7, 10], [15, 22]]
+#     '\ntorch: ', tensor.dot(tensor)     # this will convert tensor to [1,2,3,4], you'll get 30.0
+# )
