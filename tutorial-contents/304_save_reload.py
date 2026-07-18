@@ -50,7 +50,7 @@ def save():
 
 def restore_net():
     # restore entire net1 to net2
-    net2 = torch.load('net.pkl')
+    net2 = torch.load('net.pkl', weights_only=False)
     prediction = net2(x)
 
     # plot result
