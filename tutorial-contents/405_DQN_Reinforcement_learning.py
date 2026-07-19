@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-import gym
+import gymnasium as gym
 
 # Hyper Parameters
 BATCH_SIZE = 32
@@ -21,7 +21,7 @@ EPSILON = 0.9               # greedy policy
 GAMMA = 0.9                 # reward discount
 TARGET_REPLACE_ITER = 100   # target update frequency
 MEMORY_CAPACITY = 2000
-env = gym.make('CartPole-v0')
+env = gym.make('CartPole-v1', render_mode='human')
 env = env.unwrapped
 N_ACTIONS = env.action_space.n
 N_STATES = env.observation_space.shape[0]
@@ -62,7 +62,7 @@ class DQN(object):
             action = action[0] if ENV_A_SHAPE == 0 else action.reshape(ENV_A_SHAPE)  # return the argmax index
         else:   # random
             action = np.random.randint(0, N_ACTIONS)
-            action = action if ENV_A_SHAPE == 0 else action.reshape(ENV_A_SHAPE)
+            # action is already an int here
         return action
 
     def store_transition(self, s, a, r, s_):
@@ -100,14 +100,15 @@ dqn = DQN()
 
 print('\nCollecting experience...')
 for i_episode in range(400):
-    s = env.reset()
+    s, _ = env.reset()
     ep_r = 0
     while True:
         env.render()
         a = dqn.choose_action(s)
 
         # take action
-        s_, r, done, info = env.step(a)
+        s_, r, terminated, truncated, info = env.step(a)
+        done = terminated or truncated
 
         # modify the reward
         x, x_dot, theta, theta_dot = s_

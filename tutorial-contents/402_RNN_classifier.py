@@ -35,10 +35,10 @@ train_data = dsets.MNIST(
 )
 
 # plot one example
-print(train_data.train_data.size())     # (60000, 28, 28)
-print(train_data.train_labels.size())   # (60000)
-plt.imshow(train_data.train_data[0].numpy(), cmap='gray')
-plt.title('%i' % train_data.train_labels[0])
+print(train_data.data.size())     # (60000, 28, 28)
+print(train_data.targets.size())  # (60000)
+plt.imshow(train_data.data[0].numpy(), cmap='gray')
+plt.title('%i' % train_data.targets[0])
 plt.show()
 
 # Data Loader for easy mini-batch return in training
@@ -46,8 +46,8 @@ train_loader = torch.utils.data.DataLoader(dataset=train_data, batch_size=BATCH_
 
 # convert test data into Variable, pick 2000 samples to speed up testing
 test_data = dsets.MNIST(root='./mnist/', train=False, transform=transforms.ToTensor())
-test_x = test_data.test_data.type(torch.FloatTensor)[:2000]/255.   # shape (2000, 28, 28) value in range(0,1)
-test_y = test_data.test_labels.numpy()[:2000]    # covert to numpy array
+test_x = test_data.data.type(torch.FloatTensor)[:2000]/255.   # shape (2000, 28, 28) value in range(0,1)
+test_y = test_data.targets.numpy()[:2000]    # covert to numpy array
 
 
 class RNN(nn.Module):

@@ -63,20 +63,17 @@ for step in range(10000):
     G_inputs = torch.cat((G_ideas, labels), 1)                      # ideas with labels
     G_paintings = G(G_inputs)                                       # fake painting w.r.t label from G
 
-    D_inputs0 = torch.cat((artist_paintings, labels), 1)            # all have their labels
-    D_inputs1 = torch.cat((G_paintings, labels), 1)
-    prob_artist0 = D(D_inputs0)                 # D try to increase this prob
-    prob_artist1 = D(D_inputs1)                 # D try to reduce this prob
-
-    D_score0 = torch.log(prob_artist0)          # maximise this for D
-    D_score1 = torch.log(1. - prob_artist1)     # maximise this for D
-    D_loss = - torch.mean(D_score0 + D_score1)  # minimise the negative of both two above for D
-    G_loss = torch.mean(D_score1)               # minimise D score w.r.t G
-
+    # train D
+    prob_artist0 = D(torch.cat((artist_paintings, labels), 1))          # D try to increase this prob
+    prob_artist1 = D(torch.cat((G_paintings.detach(), labels), 1))  # D try to reduce this prob
+    D_loss = - torch.mean(torch.log(prob_artist0) + torch.log(1. - prob_artist1))
     opt_D.zero_grad()
-    D_loss.backward(retain_graph=True)      # reusing computational graph
+    D_loss.backward()
     opt_D.step()
 
+    # train G
+    prob_artist1 = D(torch.cat((G_paintings, labels), 1))
+    G_loss = torch.mean(torch.log(1. - prob_artist1))
     opt_G.zero_grad()
     G_loss.backward()
     opt_G.step()
