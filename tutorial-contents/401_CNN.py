@@ -41,10 +41,10 @@ train_data = torchvision.datasets.MNIST(
 )
 
 # plot one example
-print(train_data.train_data.size())                 # (60000, 28, 28)
-print(train_data.train_labels.size())               # (60000)
-plt.imshow(train_data.train_data[0].numpy(), cmap='gray')
-plt.title('%i' % train_data.train_labels[0])
+print(train_data.data.size())                 # (60000, 28, 28)
+print(train_data.targets.size())              # (60000)
+plt.imshow(train_data.data[0].numpy(), cmap='gray')
+plt.title('%i' % train_data.targets[0])
 plt.show()
 
 # Data Loader for easy mini-batch return in training, the image batch shape will be (50, 1, 28, 28)
@@ -52,8 +52,8 @@ train_loader = Data.DataLoader(dataset=train_data, batch_size=BATCH_SIZE, shuffl
 
 # pick 2000 samples to speed up testing
 test_data = torchvision.datasets.MNIST(root='./mnist/', train=False)
-test_x = torch.unsqueeze(test_data.test_data, dim=1).type(torch.FloatTensor)[:2000]/255.   # shape from (2000, 28, 28) to (2000, 1, 28, 28), value in range(0,1)
-test_y = test_data.test_labels[:2000]
+test_x = torch.unsqueeze(test_data.data, dim=1).type(torch.FloatTensor)[:2000]/255.   # shape from (2000, 28, 28) to (2000, 1, 28, 28), value in range(0,1)
+test_y = test_data.targets[:2000]
 
 
 class CNN(nn.Module):
@@ -120,7 +120,7 @@ for epoch in range(EPOCH):
             print('Epoch: ', epoch, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
             if HAS_SK:
                 # Visualization of trained flatten layer (T-SNE)
-                tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=5000)
+                tsne = TSNE(perplexity=30, n_components=2, init='pca', max_iter=5000)
                 plot_only = 500
                 low_dim_embs = tsne.fit_transform(last_layer.data.numpy()[:plot_only, :])
                 labels = test_y.numpy()[:plot_only]
